@@ -3,7 +3,7 @@ import './header.css';
 
 const Header = () => (
   <header className='header'>
-    <Container>CODEXIA</Container>
+    <Container>CODEXICA</Container>
   </header>
 );
 
