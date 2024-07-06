@@ -1,0 +1,4 @@
+.main-page, .cards {
+  display: flex;
+  flex-direction: column;
+}
