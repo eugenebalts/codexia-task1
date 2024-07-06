@@ -6,8 +6,8 @@ import axios from 'axios';
 import './main-page.css';
 
 const MainPage = () => {
-  const [isModal, setIsModal] = useState(false);
   const [planets, setPlanets] = useState([]);
+  const [choosedPlanet, setChoosedPlanet] = useState(null);
 
   // it should be inside API and sets global state.
 
@@ -29,12 +29,12 @@ const MainPage = () => {
     fetchPlanets();
   }, []);
 
-  const handleOpenModal = () => {
-    setIsModal(true);
+  const handleOpenModal = (planet) => {
+    setChoosedPlanet(planet);
   };
 
   const handleCloseModal = () => {
-    setIsModal(false);
+    setChoosedPlanet(null);
   };
 
   const handleUpdateSearch = (event) => {
@@ -46,11 +46,14 @@ const MainPage = () => {
   return (
     <Layout>
       <div className='main-page'>
-        <button onClick={handleOpenModal}>Open Modal</button>
-        {isModal && (
-          <Modal onClose={handleCloseModal}>THIS IS COEXICA BABY</Modal>
+        {choosedPlanet && (
+          <Modal onClose={handleCloseModal}>
+            <p>Name: {choosedPlanet.name}</p>
+            <p>Terrain: {choosedPlanet.terrain}</p>
+          </Modal>
         )}
         <input
+          className='search'
           type='text'
           placeholder='Search'
           onChange={handleUpdateSearch}
@@ -58,8 +61,10 @@ const MainPage = () => {
         <div className='cards'>
           <p className='cards__title'>Fetched planets:</p>
           <ul className='cards__list'>
-            {planets.map(({ name }) => (
-              <li key={name}>{name ?? 'unkown'}</li>
+            {planets.map((planet) => (
+              <li key={planet.name} onClick={() => handleOpenModal(planet)}>
+                {planet.name ?? 'unkown'}
+              </li>
             ))}
           </ul>
         </div>
