@@ -1,25 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
-import Modal from '../components/Modal/Modal';
-import Layout from '../layout/Layout';
-import { useDebounce } from '../utils/debounce';
+import Modal from '../../components/Modal/Modal';
+import Layout from '../../layout/Layout';
+import { useDebounce } from '../../utils/debounce';
 import axios from 'axios';
 import './main-page.css';
+import Selection from '../../components/Selection/Selection';
+import { sortOptions } from '../../constants/sort-options';
+import { sortArray } from '../../utils/sort-array';
 
 const MainPage = () => {
   const [planets, setPlanets] = useState([]);
   const [choosedPlanet, setChoosedPlanet] = useState(null);
+  const [sortOption, setSortOption] = useState('none');
 
   // it should be inside API and sets global state.
 
-  const fetchPlanets = useCallback(async (search = '') => {
-    const res = await axios(
-      `https://swapi.dev/api/planets${search ? '?search=' + search : ''}`,
-    );
+  const fetchPlanets = useCallback(
+    async (search = '') => {
+      const res = await axios(
+        `https://swapi.dev/api/planets${search ? '?search=' + search : ''}`,
+      );
 
-    const { results } = res?.data;
+      const { results } = res?.data;
 
-    setPlanets(results ?? []);
-  }, []);
+      const sortedPlanets =
+        sortOption === 'none'
+          ? results
+          : sortArray(results, 'name', sortOption);
+
+      setPlanets(sortedPlanets);
+    },
+    [sortOption],
+  );
 
   const debouncedSearch = useDebounce((value) => {
     fetchPlanets(value);
@@ -27,7 +39,7 @@ const MainPage = () => {
 
   useEffect(() => {
     fetchPlanets();
-  }, []);
+  }, [sortOption]);
 
   const handleOpenModal = (planet) => {
     setChoosedPlanet(planet);
@@ -41,6 +53,10 @@ const MainPage = () => {
     const { value } = event.target;
 
     debouncedSearch(value);
+  };
+
+  const handleSortChange = (value) => {
+    setSortOption(value);
   };
 
   return (
@@ -60,6 +76,11 @@ const MainPage = () => {
         ></input>
         <div className='cards'>
           <p className='cards__title'>Fetched planets:</p>
+          <Selection
+            label='Sort by: '
+            options={sortOptions}
+            onChange={handleSortChange}
+          />
           <ul className='cards__list'>
             {planets.map((planet) => (
               <li key={planet.name} onClick={() => handleOpenModal(planet)}>
