@@ -3,6 +3,8 @@ import './modal.css';
 
 const Modal = ({ children, onClose, autoClose = undefined }) => {
   useEffect(() => {
+    document.body.style.overflowY = 'hidden';
+
     if (autoClose) {
       const autoCloseTimeout = setTimeout(() => {
         onClose();
@@ -12,6 +14,10 @@ const Modal = ({ children, onClose, autoClose = undefined }) => {
         clearTimeout(autoCloseTimeout);
       };
     }
+
+    return () => {
+      document.body.style.overflowY = 'auto';
+    };
   }, []);
   // We could make 2 different handlers. 1st for HandleCloseBtn and 2nd for HandleClickAway
 
