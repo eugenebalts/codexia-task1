@@ -18,11 +18,9 @@ const Header = () => {
     <header className='header'>
       <Container>
         <h1>CODEXICA</h1>
-        {isModal && (
-          <Modal autoClose={3000} onClose={handleCloseModal}>
-            <p>Will close in 3 sec</p>
-          </Modal>
-        )}
+        <Modal autoClose={3000} onClose={handleCloseModal} isOpen={isModal}>
+          <p>Will close in 3 sec</p>
+        </Modal>
         <button onClick={handleOpenModal}>Open modal</button>
       </Container>
     </header>

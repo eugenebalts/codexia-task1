@@ -62,12 +62,12 @@ const MainPage = () => {
   return (
     <Layout>
       <div className='main-page'>
-        {choosedPlanet && (
-          <Modal onClose={handleCloseModal}>
-            <p>Name: {choosedPlanet.name}</p>
-            <p>Terrain: {choosedPlanet.terrain}</p>
-          </Modal>
-        )}
+        <Modal onClose={handleCloseModal} isOpen={!!choosedPlanet}>
+          <p>Name: {choosedPlanet?.name ?? 'condit rendering solves this'}</p>
+          <p>
+            Terrain: {choosedPlanet?.terrain ?? 'condit rendering solves this'}
+          </p>
+        </Modal>
         <input
           className='search'
           type='text'

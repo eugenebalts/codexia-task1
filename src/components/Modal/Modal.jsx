@@ -1,27 +1,28 @@
 import { useEffect } from 'react';
 import './modal.css';
 
-const Modal = ({ children, onClose, autoClose = undefined }) => {
+const Modal = ({ isOpen, children, onClose, autoClose = undefined }) => {
   useEffect(() => {
-    document.body.style.overflowY = 'hidden';
+    if (isOpen) {
+      document.body.style.overflowY = 'hidden';
 
-    let autoCloseTimeout;
+      let autoCloseTimeout;
 
-    if (autoClose) {
-      autoCloseTimeout = setTimeout(() => {
-        onClose();
-      }, autoClose);
-    }
-
-    return () => {
-      document.body.style.overflowY = 'auto';
-
-      if (autoCloseTimeout) {
-        clearTimeout(autoCloseTimeout);
+      if (autoClose) {
+        autoCloseTimeout = setTimeout(() => {
+          onClose();
+        }, autoClose);
       }
-    };
-  }, []);
-  // We could make 2 different handlers. 1st for HandleCloseBtn and 2nd for HandleClickAway
+
+      return () => {
+        document.body.style.overflowY = 'auto';
+
+        if (autoCloseTimeout) {
+          clearTimeout(autoCloseTimeout);
+        }
+      };
+    }
+  }, [isOpen]);
 
   const handleClose = ({ target, currentTarget }) => {
     if (target instanceof HTMLElement) {
@@ -35,6 +36,10 @@ const Modal = ({ children, onClose, autoClose = undefined }) => {
       }
     }
   };
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className='modal' onClick={handleClose}>
