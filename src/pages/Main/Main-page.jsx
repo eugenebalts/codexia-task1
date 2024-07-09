@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/Modal/Modal';
 import Layout from '../../layout/Layout';
-import { useDebounce } from '../../utils/debounce';
+import { useDebounce } from '../../hooks/useDebounce';
 import axios from 'axios';
 import './main-page.css';
 import Selection from '../../components/Selection/Selection';
