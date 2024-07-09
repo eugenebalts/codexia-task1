@@ -3,15 +3,16 @@ import Container from '../Container/Container';
 import './footer.css';
 
 const Footer = () => {
-  const [width, setWidth] = useState(window.innerWidth);
-  const [height, setHeight] = useState(window.innerHeight);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   useEffect(() => {
     const handleResize = (event) => {
       const { innerWidth, innerHeight } = event.target;
 
-      setWidth(innerWidth);
-      setHeight(innerHeight);
+      setWindowSize({ width: innerWidth, height: innerHeight });
     };
 
     window.addEventListener('resize', handleResize);
@@ -25,8 +26,8 @@ const Footer = () => {
     <footer className='footer'>
       <Container>
         <div className='footer__content'>
-          <p>Width: {width}px</p>
-          <p>Height: {height}px</p>
+          <p>Width: {windowSize.width}px</p>
+          <p>Height: {windowSize.height}px</p>
         </div>
       </Container>
     </footer>
