@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './modal.css';
 
 const Modal = ({ isOpen, children, onClose, autoClose = undefined }) => {
@@ -41,13 +42,14 @@ const Modal = ({ isOpen, children, onClose, autoClose = undefined }) => {
     return null;
   }
 
-  return (
+  return createPortal(
     <div className='modal' onClick={handleClose}>
       <div className='modal__content'>
         <button className='modal__close-button'>X</button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
