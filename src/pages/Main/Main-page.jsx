@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Modal from '../../components/Modal/Modal';
 import Layout from '../../layout/Layout';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -13,8 +13,7 @@ const MainPage = () => {
   const [planets, setPlanets] = useState([]);
   const [choosedPlanet, setChoosedPlanet] = useState(null);
   const [sortOption, setSortOption] = useState('none');
-  const [forceUpdate, setForceUpdate] = useState(0);
-  const searchRef = useRef('');
+  const [search, setSearch] = useState('');
 
   const fetchPlanets = useCallback(
     async (search = '') => {
@@ -27,18 +26,18 @@ const MainPage = () => {
 
       setPlanets(sortedPlanets);
     },
-    [sortOption, forceUpdate],
+    [sortOption, search],
   );
 
   const debouncedSearch = useCallback(
-    useDebounce(() => {
-      setForceUpdate((prev) => prev + 1);
+    useDebounce((value) => {
+      setSearch(value);
     }, 500),
     [],
   );
 
   useEffect(() => {
-    fetchPlanets(searchRef.current);
+    fetchPlanets(search);
   }, [fetchPlanets]);
 
   const handleOpenModal = (planet) => {
@@ -52,8 +51,7 @@ const MainPage = () => {
   const handleUpdateSearch = (event) => {
     const { value } = event.target;
 
-    searchRef.current = value;
-    debouncedSearch();
+    debouncedSearch(value);
   };
 
   const handleSortChange = (value) => {
