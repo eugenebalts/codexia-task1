@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import Modal from '../../components/Modal/Modal';
 import Layout from '../../layout/Layout';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -7,39 +7,39 @@ import './main-page.css';
 import Selection from '../../components/Selection/Selection';
 import { sortOptions } from '../../constants/sort-options';
 import { sortArray } from '../../utils/sort-array';
+import planetsApi from '../../services/endpoints/planets';
 
 const MainPage = () => {
   const [planets, setPlanets] = useState([]);
   const [choosedPlanet, setChoosedPlanet] = useState(null);
   const [sortOption, setSortOption] = useState('none');
-
-  // it should be inside API and sets global state.
+  const [forceUpdate, setForceUpdate] = useState(0);
+  const searchRef = useRef('');
 
   const fetchPlanets = useCallback(
     async (search = '') => {
-      const res = await axios(
-        `https://swapi.dev/api/planets${search ? '?search=' + search : ''}`,
-      );
-
-      const { results } = res?.data;
+      const fetchedPlanets = await planetsApi.getPeople(search);
 
       const sortedPlanets =
         sortOption === 'none'
-          ? results
-          : sortArray(results, 'name', sortOption);
+          ? fetchedPlanets
+          : sortArray(fetchedPlanets, 'name', sortOption);
 
       setPlanets(sortedPlanets);
     },
-    [sortOption],
+    [sortOption, forceUpdate],
   );
 
-  const debouncedSearch = useDebounce((value) => {
-    fetchPlanets(value);
-  }, 500);
+  const debouncedSearch = useCallback(
+    useDebounce(() => {
+      setForceUpdate((prev) => prev + 1);
+    }, 500),
+    [],
+  );
 
   useEffect(() => {
-    fetchPlanets();
-  }, [sortOption]);
+    fetchPlanets(searchRef.current);
+  }, [fetchPlanets]);
 
   const handleOpenModal = (planet) => {
     setChoosedPlanet(planet);
@@ -52,7 +52,8 @@ const MainPage = () => {
   const handleUpdateSearch = (event) => {
     const { value } = event.target;
 
-    debouncedSearch(value);
+    searchRef.current = value;
+    debouncedSearch();
   };
 
   const handleSortChange = (value) => {
